@@ -1,32 +1,49 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"log"
+	"avito_banners/internal/config"
+	//"fmt"
+	"log/slog"
 	"os"
-	"time"
 )
 
-type User struct {
-	Name          string    `json:"name"`
-	Password      string    `json:"password"`
-	PreferredFish []string  `json:"preferredFish,omitempty"`
-	CreatedAt     time.Time `json:"createdAt"`
-}
+const(
+	envLocal = "local"
+	envDev = "dev"
+	envProd = "prod"
+)
+
 
 func main() {
-	u := &User{
-		Name:      "Sammy the Shark",
-		Password:  "fisharegreat",
-		CreatedAt: time.Now(),
-	}
+	cfg := config.MustLoad()
 
-	out, err := json.MarshalIndent(u, "", "  ")
-	if err != nil {
-		log.Println(err)
-		os.Exit(1)
-	}
+	log := setupLogger(cfg.Env)
+	log.Info("config is load:", slog.String("env", cfg.Env))
+	log.Debug("debug messages are enabled")
 
-	fmt.Println(string(out))
+	//Connect to db
+	
+	//init router
+
+	//postgres
+}
+
+func setupLogger(env string) *slog.Logger {
+	var log *slog.Logger
+
+	switch env {
+	case envLocal:
+		log = slog.New(
+			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
+		)
+	case envDev:
+		log = slog.New(
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
+		)
+	case envProd:
+		log = slog.New(
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+		)
+	}
+	return log
 }

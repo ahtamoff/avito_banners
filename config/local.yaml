@@ -1,12 +1,12 @@
 #описание среды разворачивания сервера
 env: "local"
-#путь до файлов в которых храниться база данных (!!!это для sql lite потом переделать на postgres) 
-storage_path: "./storage/storage.db"
+
 #параметры сервера
 http_server:
   address: "localhost: 8081"
   timeout: 1s
   idle_timeout: 300s
+#параметры подключения к базе данных
 db:
   host: localhost
   port: 5436

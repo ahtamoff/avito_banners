@@ -1,5 +1,11 @@
 # avito_banners
 
+# banner-servise
+
+# REST API 
+
+
+
 ## Структура проекта:
     cmd
         /avito-banners
@@ -12,3 +18,4 @@
         /storage
             /models
             /postgres
+

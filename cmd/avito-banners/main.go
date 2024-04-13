@@ -1,49 +1,75 @@
 package main
 
 import (
-	"avito_banners/internal/config"
+
+	"avito_banners/internal/banner"
 	//"fmt"
-	"log/slog"
-	"os"
+	"log"
+	"net"
+	"net/http"
+	"time"
+
+	"github.com/julienschmidt/httprouter"
+
 )
 
-const(
-	envLocal = "local"
-	envDev = "dev"
-	envProd = "prod"
-)
+// const(
+// 	envLocal = "local"
+// 	envDev = "dev"
+// 	envProd = "prod"
+// )
 
+
+
+type test struct {
+	param int
+}
 
 func main() {
-	cfg := config.MustLoad()
+	log.Println("create router")
+	router := httprouter.New()
+	log.Println("register user handler")
+	handler := banner.NewHandler()
+	handler.Register(router)
+	start(router)
 
-	log := setupLogger(cfg.Env)
-	log.Info("config is load:", slog.String("env", cfg.Env))
-	log.Debug("debug messages are enabled")
-
-	//Connect to db
-	
-	//init router
-
-	//postgres
 }
 
-func setupLogger(env string) *slog.Logger {
-	var log *slog.Logger
 
-	switch env {
-	case envLocal:
-		log = slog.New(
-			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
-		)
-	case envDev:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
-		)
-	case envProd:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
-		)
+func start(router *httprouter.Router) {
+	log.Println("start application")
+
+	listener, err := net.Listen("tcp", ":1234")
+	if err != nil {
+		panic(err)
 	}
-	return log
+
+	server := &http.Server{
+		Handler:      router,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	log.Println("server is listening port 0.0.0.0:1234")
+
+	log.Fatalln(server.Serve(listener))
 }
+
+// func setupLogger(env string) *slog.Logger {
+// 	var log *slog.Logger
+
+// 	switch env {
+// 	case envLocal:
+// 		log = slog.New(
+// 			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
+// 		)
+// 	case envDev:
+// 		log = slog.New(
+// 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
+// 		)
+// 	case envProd:
+// 		log = slog.New(
+// 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+// 		)
+// 	}
+// 	return log
+// }

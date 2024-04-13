@@ -1,16 +1,14 @@
 package main
 
 import (
-
 	"avito_banners/internal/banner"
-	//"fmt"
-	"log"
+	"avito_banners/internal/config"
+	"avito_banners/pkg/logging"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/julienschmidt/httprouter"
-
 )
 
 // const(
@@ -26,18 +24,24 @@ type test struct {
 }
 
 func main() {
-	log.Println("create router")
+	logger := logging.GetLogger()
+
+
+	logger.Info("create router")
 	router := httprouter.New()
-	log.Println("register user handler")
-	handler := banner.NewHandler()
+
+	cfg := config.GetConfig()
+	logger.Info("register user handler")
+	handler := banner.NewHandler(logger)
 	handler.Register(router)
 	start(router)
 
 }
 
 
-func start(router *httprouter.Router) {
-	log.Println("start application")
+func start(router *httprouter.Router, cfg *config.Config) {
+	logger := logging.GetLogger()
+	logger.Info("start application")
 
 	listener, err := net.Listen("tcp", ":1234")
 	if err != nil {
@@ -49,9 +53,9 @@ func start(router *httprouter.Router) {
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	log.Println("server is listening port 0.0.0.0:1234")
+	logger.Info("server is listening port 0.0.0.0:1234")
 
-	log.Fatalln(server.Serve(listener))
+	logger.Fatal(server.Serve(listener))
 }
 
 // func setupLogger(env string) *slog.Logger {

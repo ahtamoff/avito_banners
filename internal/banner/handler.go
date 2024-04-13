@@ -2,10 +2,13 @@ package banner
 
 import (
 	"avito_banners/internal/handlers"
-	"net/http"
+	"avito_banners/pkg/logging"
 	"fmt"
+	"net/http"
+
 	"github.com/julienschmidt/httprouter"
 )
+
 //чтобы посмотреть реализует ли handler сущности основной интерфейс Handler
 var _ handlers.Handler = &handler{}
 
@@ -16,11 +19,13 @@ const (
 )
 
 type handler struct {
-
+	logger *logging.Logger
 }
 
-func NewHandler()handlers.Handler{
-	return &handler{}
+func NewHandler(logger *logging.Logger)handlers.Handler{
+	return &handler{
+		logger: logger,
+	}
 }
 
 func(h *handler) Register(router *httprouter.Router){

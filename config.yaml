@@ -1,15 +1,10 @@
-http_server:
-  address: "localhost: 8081"
-  timeout: 1s
-  idle_timeout: 300s
-
-db:
+is_debug: true
+listen:
+  type: port
+  port: 1234
+storage:
   host: localhost
-  port: 5436
-  user: postgres
+  port: 5432
+  database: postgres
+  username: postgres
   password: postgres
-  name: banners-db
-
-jwt:
-  secret: FJKngdjkfgndfkgc534tlLKFJKLmfkdfjnk
-default_admin_pass: NJKfsjkdtoierf

@@ -1,21 +1,7 @@
-# avito_banners
+# На данный момент реализованно:
 
-# banner-servise
-
-# REST API 
-
-
-
-## Структура проекта:
-    cmd
-        /avito-banners
-            main.go
-    config
-        local.yaml
-    internal
-        /config
-            config.go
-        /storage
-            /models
-            /postgres
-
+    -логирование
+    -конфигурирование 
+    -инициализация роутера
+    -определен интерфейс хедлеров
+    -определен и реализован интерфейс запросоов к бд

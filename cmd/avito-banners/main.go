@@ -4,9 +4,11 @@ import (
 	"avito_banners/internal/banner"
 	"avito_banners/internal/config"
 	"avito_banners/pkg/logging"
+	"fmt"
 	"net"
 	"net/http"
 	"time"
+
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -34,7 +36,7 @@ func main() {
 	logger.Info("register user handler")
 	handler := banner.NewHandler(logger)
 	handler.Register(router)
-	start(router)
+	start(router, cfg)
 
 }
 
@@ -43,9 +45,15 @@ func start(router *httprouter.Router, cfg *config.Config) {
 	logger := logging.GetLogger()
 	logger.Info("start application")
 
-	listener, err := net.Listen("tcp", ":1234")
-	if err != nil {
-		panic(err)
+	var listener net.Listener
+	var listenErr error
+
+	logger.Info("listen tcp")
+	listener, listenErr = net.Listen("tcp", fmt.Sprintf("%s:%s", cfg.Listen.BindIP, cfg.Listen.Port))
+	logger.Infof("server is listening port %s:%s", cfg.Listen.BindIP, cfg.Listen.Port)
+
+	if listenErr != nil {
+		logger.Fatal(listenErr)
 	}
 
 	server := &http.Server{
